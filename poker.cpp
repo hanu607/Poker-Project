@@ -1,50 +1,116 @@
 #include <iostream>
+#include <vector>
+#include <deque>
+#define number first
+#define suit second
 
 using namespace std;
-char broadway[5] = {'T', 'J', 'Q', 'K', 'A'};
 
-pair<int, int> GetCard()
+enum Broadway {
+    T = 10, J, Q, K, A
+};
+enum Suits {
+    SPADE, HEART, CLUB, DIAMOND
+};
+enum Score {
+    HighCard = 0, OnePair = 100, TwoPair = 200, Tripple = 300, Straight = 400, Flush = 500, FullHouse = 600, FourCard = 700, StraightFlush = 900
+};
+
+pair<int, int> getCard()
 {
     char i, j;
     pair<int, int> card;
     while (cin >> i >> j)
     {
-        //input Number
+        //input number
         if ('2' <= i && i <= '9')
-            card.first = i - '0';
+            card.number = i - '0';
         else if (i == 'T')
-            card.first = 10;
+            card.number = T;
         else if (i == 'J')
-            card.first = 11;
+            card.number = J;
         else if (i == 'Q')
-            card.first = 12;
+            card.number = Q;
         else if (i == 'K')
-            card.first = 13;
+            card.number = K;
         else if (i == 'A')
-            card.first = 14;
+            card.number = A;
         else
             continue;
-        //input Shape
+        //input suit
         if (j == 's')
-            card.second = 0;
+            card.suit = SPADE;
         else if (j == 'h')
-            card.second = 1;
+            card.suit = HEART;
         else if (j == 'c')
-            card.second = 2;
+            card.suit = CLUB;
         else if (j == 'd')
-            card.second = 3;
+            card.suit = DIAMOND;
         else
             continue;
-        //return <Number,Shape>
+        //return <number, suit>
         return card;
     }
 }
+
+int cards[4][15];
+int nums[15];
+int suits[4];
+
+namespace Rank {
+    
+    
+    int isStraight(int s) {
+        int* ptr = nums;
+        if (s != -1) ptr = cards[s];
+        int res = 0;
+        deque<int> dq;
+        for (int n = A; n > 0; n--) {
+            if (!ptr[n]) dq.clear();
+            else if (dq.empty() || dq.back()-1 == n) dq.push_back(n);
+            if (dq.size() == 5) {
+                res += Straight + dq.front();
+                break;
+            }
+        }
+        return res;
+    }
+
+    int isFlush() {
+        int res = 0;
+        for (int s = SPADE; s <= DIAMOND; s++) {
+            if (suits[s] < 5) continue;
+            res += Flush;
+            res += isStraight(s);
+            if (res > StraightFlush) break;
+            for (int n = A; n > 1; n--) {
+                if (cards[s][n]) {
+                    res += n;
+                    return res;
+                }
+            }
+        }
+        return res;
+    }
+};
+
+void test() {
+    cout << Rank::isFlush() << '\n';
+    cout << Rank::isStraight(-1) << '\n';
+}
+
 int main()
 {
-    while (1)
+    for (int i = 0; i < 7; i++)
     {
-        auto temp = GetCard();
-        cout << temp.first << " " << temp.second << endl;
+        auto [n, s] = getCard();
+        cards[s][n] = 1;
+        nums[n]++;
+        suits[s]++;
+        if (n == A) {
+            cards[s][1] = 1;
+            nums[1]++;
+        }
     }
-    return 0;
+    test();
 }
