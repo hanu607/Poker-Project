@@ -1,19 +1,36 @@
 #include <iostream>
-#include <vector>
 #include <deque>
 #define number first
 #define suit second
 
 using namespace std;
 
-enum Broadway {
-    T = 10, J, Q, K, A
+enum Broadway
+{
+    T = 10,
+    J,
+    Q,
+    K,
+    A
 };
-enum Suits {
-    SPADE, HEART, CLUB, DIAMOND
+enum Suits
+{
+    SPADE,
+    HEART,
+    CLUB,
+    DIAMOND
 };
-enum Score {
-    HighCard = 0, OnePair = 100, TwoPair = 200, Tripple = 300, Straight = 400, Flush = 500, FullHouse = 600, FourCard = 700, StraightFlush = 900
+enum Score
+{
+    HighCard = 0,
+    OnePair = 100,
+    TwoPair = 200,
+    Tripple = 300,
+    Straight = 400,
+    Flush = 500,
+    FullHouse = 600,
+    FourCard = 700,
+    StraightFlush = 900
 };
 
 pair<int, int> getCard()
@@ -57,18 +74,24 @@ int cards[4][15];
 int nums[15];
 int suits[4];
 
-namespace Rank {
-    
-    
-    int isStraight(int s) {
-        int* ptr = nums;
-        if (s != -1) ptr = cards[s];
+namespace Rank
+{
+
+    int isStraight(int s)
+    {
+        int *ptr = nums;
+        if (s != -1)
+            ptr = cards[s];
         int res = 0;
         deque<int> dq;
-        for (int n = A; n > 0; n--) {
-            if (!ptr[n]) dq.clear();
-            else if (dq.empty() || dq.back()-1 == n) dq.push_back(n);
-            if (dq.size() == 5) {
+        for (int n = A; n > 0; n--)
+        {
+            if (!ptr[n])
+                dq.clear();
+            else if (dq.empty() || dq.back() - 1 == n)
+                dq.push_back(n);
+            if (dq.size() == 5)
+            {
                 res += Straight + dq.front();
                 break;
             }
@@ -76,15 +99,21 @@ namespace Rank {
         return res;
     }
 
-    int isFlush() {
+    int isFlush()
+    {
         int res = 0;
-        for (int s = SPADE; s <= DIAMOND; s++) {
-            if (suits[s] < 5) continue;
+        for (int s = SPADE; s <= DIAMOND; s++)
+        {
+            if (suits[s] < 5)
+                continue;
             res += Flush;
             res += isStraight(s);
-            if (res > StraightFlush) break;
-            for (int n = A; n > 1; n--) {
-                if (cards[s][n]) {
+            if (res > StraightFlush)
+                break;
+            for (int n = A; n > 1; n--)
+            {
+                if (cards[s][n])
+                {
                     res += n;
                     return res;
                 }
@@ -94,7 +123,8 @@ namespace Rank {
     }
 };
 
-void test() {
+void test()
+{
     cout << Rank::isFlush() << '\n';
     cout << Rank::isStraight(-1) << '\n';
 }
@@ -107,7 +137,8 @@ int main()
         cards[s][n] = 1;
         nums[n]++;
         suits[s]++;
-        if (n == A) {
+        if (n == A)
+        {
             cards[s][1] = 1;
             nums[1]++;
         }
