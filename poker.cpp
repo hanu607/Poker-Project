@@ -76,10 +76,9 @@ pair<int, int> setCard()
 
 namespace Rank
 {
-
     pair<int, int> isStraight(int s)
-    {   
-        int* arr = (s == -1 ? nums : cards[s]);
+    {
+        int *arr = (s == -1 ? nums : cards[s]);
         pair<int, int> rank = {0, 0};
         deque<int> dq;
         for (int n = A; n > 0; n--)
@@ -126,7 +125,8 @@ namespace Rank
     {
         int mx = 0;
         pair<int, pair<int, int>> rank = {0, {0, 0}};
-        for (int n = A; n > 1; n--) {
+        for (int n = A; n > 1; n--)
+        {
             if (nums[n] == 4)
                 return {FOURCARD, {n, 0}};
             else if (nums[n] == 3)
@@ -167,7 +167,7 @@ namespace Rank
                     else
                         break;
                 }
-                else 
+                else
                 {
                     rank.first = ONEPAIR;
                     rank.second.first = n;
@@ -188,13 +188,15 @@ namespace Rank
     }
 };
 
-void bruteforce() {
+void bruteforce()
+{
     bool nums[52];
     fill(nums, nums + 5, false);
     fill(nums + 5, nums + 52, true);
     unsigned long long ans = 0;
 
-    do {
+    do
+    {
         // for (int i = 0; i < 52; i++) {
         //     if (!nums[i]) cout << i + 2 << ' ';
         // }
@@ -205,7 +207,7 @@ void bruteforce() {
 }
 
 void test()
-{   
+{
     for (int i = 0; i < 7; i++)
     {
         auto [s, n] = setCard();
@@ -223,7 +225,7 @@ void test()
     auto t3 = Rank::isPair();
     cout << t1.first << ' ' << t1.second << '\n';
     cout << t2.first << ' ' << t2.second << '\n';
-    cout << t3.first << ' ' << t3.second.first << ' ' <<  t3.second.second << '\n';
+    cout << t3.first << ' ' << t3.second.first << ' ' << t3.second.second << '\n';
 }
 
 int main()
