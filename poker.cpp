@@ -1,6 +1,6 @@
 #include <iostream>
 #include <deque>
-// #include <vector>
+#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -32,96 +32,135 @@ enum Ranks
     FOURCARD,
     STRAIGHTFLUSH
 };
-
-int cards[4][15];
-int nums[15];
-int suits[4];
-
-pair<int, int> setCard()
+bool cmp(const pair<int, int> &a, const pair<int, int> &b)
 {
-    char i, j;
-    int n, s;
-    while (cin >> i >> j)
+    return a.second > b.second;
+}
+
+vector<pair<int, int>> board;
+
+class Player
+{
+private:
+    int id;
+    // static int deck[4][15];
+    int nums[15];
+    int suits[4];
+    vector<pair<int, int>> hands;
+
+public:
+    Player() : id(++idcnt)
     {
-        // input number
-        if ('2' <= i && i <= '9')
-            n = i - '0';
-        else if (i == 'T')
-            n = T;
-        else if (i == 'J')
-            n = J;
-        else if (i == 'Q')
-            n = Q;
-        else if (i == 'K')
-            n = K;
-        else if (i == 'A')
-            n = A;
-        else
-            continue;
-        // input suit
-        if (j == 's')
-            s = SPADE;
-        else if (j == 'h')
-            s = HEART;
-        else if (j == 'c')
-            s = CLUB;
-        else if (j == 'd')
-            s = DIAMOND;
-        else
-            continue;
-        // return {suit, number}
-        return {s, n};
+        fill(nums, nums + 15, 0);
+        fill(suits, suits + 4, 0);
     }
+    void setCard(const pair<int, int> &);
+    void inputCard(int);
+    void prepare();
+    pair<int, pair<int, int>> computeRank();
+    static int idcnt;
+};
+
+pair<int, int> parseCard();
+
+bool Showdown(Player &p1, Player &p2);
+
+void test()
+{
+    Player shin;
+    Player father;
+    cout << "P1: Shin Jun Yeop" << endl;
+    shin.inputCard(2);
+    cout << "P2: Shin's God Father" << endl;
+    father.inputCard(2);
+    cout << "Board" << endl;
+    board.push_back(parseCard());
+    board.push_back(parseCard());
+    board.push_back(parseCard());
+    board.push_back(parseCard());
+    board.push_back(parseCard());
+
+    // bool res = Showdown(shin, father);
+    auto shinrank = shin.computeRank();
+    auto fatherrank = father.computeRank();
+    // if (res) cout << "Shin Wins!!!" << '\n';
+    // else cout << "Father Wins!!!" << '\n';
+    cout << "Shin: " << shinrank.first << ' ' << shinrank.second.first << ' ' << shinrank.second.second << '\n';
+    cout << "Father: " << fatherrank.first << ' ' << fatherrank.second.first << ' ' << fatherrank.second.second << '\n';
+}
+
+int main()
+{
+    test();
 }
 
 namespace Rank
 {
-    pair<int, int> isStraight(int s)
+    pair<int, pair<int, int>> isStraight(const vector<pair<int, int>> &hands)
     {
-        int *arr = (s == -1 ? nums : cards[s]);
-        pair<int, int> rank = {0, 0};
+        pair<int, pair<int, int>> rank = {0, {0, 0}};
         deque<int> dq;
-        for (int n = A; n > 0; n--)
+        for (auto it : hands)
         {
-            if (!arr[n])
+            if (dq.empty() || dq.back() - 1 == it.second)
+                dq.push_back(it.second);
+            else
                 dq.clear();
-            else if (dq.empty() || dq.back() - 1 == n)
-                dq.push_back(n);
             if (dq.size() == 5)
             {
                 rank.first = STRAIGHT;
-                rank.second = dq.front();
+                rank.second.first = dq.front();
                 break;
             }
         }
         return rank;
     }
 
-    pair<int, int> isFlush()
+    pair<int, pair<int, int>> isStraight(const vector<pair<int, int>> &hands, int s)
     {
-        pair<int, int> rank = {0, 0};
+        pair<int, pair<int, int>> rank = {0, {0, 0}};
+        deque<pair<int, int>> dq;
+        for (auto it : hands)
+        {
+            if (dq.empty() || dq.back().second - 1 == it.second && dq.back().first == it.first)
+                dq.push_back(it);
+            else
+                dq.clear();
+            if (dq.size() == 5)
+            {
+                rank.first = STRAIGHT;
+                rank.second.first = dq.front().first;
+                break;
+            }
+        }
+        return rank;
+    }
+
+    pair<int, pair<int, int>> isFlush(int *suits, const vector<pair<int, int>> &hands)
+    {
+        pair<int, pair<int, int>> rank = {0, {0, 0}};
         for (int s = SPADE; s <= DIAMOND; s++)
         {
             if (suits[s] < 5)
                 continue;
             rank.first = FLUSH;
-            for (int n = A; n > 1; n--)
-                if (cards[s][n])
+            for (auto it : hands)
+                if (it.first == s)
                 {
-                    rank.second = n;
+                    rank.second.first = it.second;
                     break;
                 }
 
-            int high = isStraight(s).second;
+            int high = isStraight(hands, s).second.first;
             if (high == 0)
                 break;
             rank.first = STRAIGHTFLUSH;
-            rank.second = high;
+            rank.second.first = high;
         }
         return rank;
     }
 
-    pair<int, pair<int, int>> isPair()
+    pair<int, pair<int, int>> isPairs(int* nums)
     {
         int mx = 0;
         pair<int, pair<int, int>> rank = {0, {0, 0}};
@@ -188,48 +227,100 @@ namespace Rank
     }
 };
 
-void bruteforce()
+void Player::setCard(const pair<int, int> &card)
 {
-    bool nums[52];
-    fill(nums, nums + 5, false);
-    fill(nums + 5, nums + 52, true);
-    unsigned long long ans = 0;
-
-    do
-    {
-        // for (int i = 0; i < 52; i++) {
-        //     if (!nums[i]) cout << i + 2 << ' ';
-        // }
-        // cout << '\n';
-    } while (next_permutation(nums, nums + 52));
-
-    cout << ans;
+    hands.push_back(card);
 }
 
-void test()
+void Player::inputCard(int n)
 {
-    for (int i = 0; i < 7; i++)
+    while (n--)
+        setCard(parseCard());
+}
+
+void Player::prepare()
+{
+    for (auto it : board)
+        setCard(it);
+    for (auto it : hands)
     {
-        auto [s, n] = setCard();
-        cards[s][n] = 1;
+        auto [s, n] = it;
+        // deck[s][n] = id;
         nums[n]++;
         suits[s]++;
         if (n == A)
         {
-            cards[s][1] = 1;
+            // deck[s][1] = id;
             nums[1]++;
         }
     }
-    auto t1 = Rank::isFlush();
-    auto t2 = Rank::isStraight(-1);
-    auto t3 = Rank::isPair();
-    cout << t1.first << ' ' << t1.second << '\n';
-    cout << t2.first << ' ' << t2.second << '\n';
-    cout << t3.first << ' ' << t3.second.first << ' ' << t3.second.second << '\n';
+    sort(hands.begin(), hands.end(), cmp);
 }
 
-int main()
+pair<int, pair<int, int>> Player::computeRank()
 {
-    test();
-    // bruteforce();
+    prepare();
+    auto Flush = Rank::isFlush(suits, hands);
+    if (Flush.first)
+    {
+        return Flush;
+    }
+    else
+    {
+        auto Straight = Rank::isStraight(hands);
+        if (Straight.first)
+        {
+            return Straight;
+        }
+        else
+        {
+            auto Pairs = Rank::isPairs(nums);
+            return Pairs;
+        }
+    }
+}
+
+bool Showdown(Player &p1, Player &p2)
+{
+    return p1.computeRank() > p2.computeRank();
+}
+
+int Player::idcnt = 0;
+
+pair<int, int> parseCard()
+{
+    char i, j;
+    int n, s;
+    while (cin >> i >> j)
+    {   
+        // input number
+        if ('2' <= i && i <= '9')
+            n = i - '0';
+        else if (i == 'T')
+            n = T;
+        else if (i == 'J')
+            n = J;
+        else if (i == 'Q')
+            n = Q;
+        else if (i == 'K')
+            n = K;
+        else if (i == 'A')
+            n = A;
+        else
+            continue;
+        // input suit
+        if (j == 's')
+            s = SPADE;
+        else if (j == 'h')
+            s = HEART;
+        else if (j == 'c')
+            s = CLUB;
+        else if (j == 'd')
+            s = DIAMOND;
+        else
+            continue;
+        // return {suit, number}
+        break;
+    }
+    return {s, n};
 }
