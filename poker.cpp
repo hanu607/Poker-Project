@@ -1,6 +1,7 @@
 #include <iostream>
 #include <deque>
 #include <vector>
+#include <set>
 #include <algorithm>
 
 using namespace std;
@@ -20,87 +21,84 @@ enum Suits
     CLUB,
     DIAMOND
 };
-enum Ranks
+struct cmp
 {
-    HIGHCARD,
-    ONEPAIR,
-    TWOPAIR,
-    TRIPPLE,
-    STRAIGHT,
-    FLUSH,
-    FULLHOUSE,
-    FOURCARD,
-    STRAIGHTFLUSH
+    bool operator()(const pair<int, int> &lhs, const pair<int, int> &rhs) const
+    {
+        return lhs.second > rhs.second;
+    }
 };
-bool cmp(const pair<int, int> &a, const pair<int, int> &b)
-{
-    return a.second > b.second;
-}
-
-vector<pair<int, int>> board;
-
 class Player
 {
 private:
     int id;
-    // static int deck[4][15];
     int nums[15];
     int suits[4];
-    vector<pair<int, int>> hands;
+    set<pair<int, int>, cmp> hands;
 
 public:
-    Player() : id(++idcnt)
+    Player() : id(++idcnt), nums{}, suits{} { }
+
+    void append_hand(const pair<int, int> &card)
     {
-        fill(nums, nums + 15, 0);
-        fill(suits, suits + 4, 0);
-    }
-    void setCard(const pair<int, int> &);
-    void inputCard(int);
-    void prepare();
-    pair<int, pair<int, int>> computeRank();
+        hands.insert(card);
+        auto [s, n] = card;
+        // deck[s][n] = id;
+        this->nums[n]++;
+        this->suits[s]++;
+        if (n == A)
+        {
+            // deck[s][1] = id;
+            nums[1]++;
+        }
+    };
     static int idcnt;
+    // static int deck[4][15];
+
+    friend class Table;
 };
 
-pair<int, int> parseCard();
+int Player::idcnt = 0;
 
-bool Showdown(Player &p1, Player &p2);
-
-void test()
+class Table
 {
-    Player shin;
-    Player father;
-    cout << "P1: Shin Jun Yeop" << endl;
-    shin.inputCard(2);
-    cout << "P2: Shin's God Father" << endl;
-    father.inputCard(2);
-    cout << "Board" << endl;
-    board.push_back(parseCard());
-    board.push_back(parseCard());
-    board.push_back(parseCard());
-    board.push_back(parseCard());
-    board.push_back(parseCard());
+private:
+    vector<Player*> players;
+    vector<pair<int, int>> board;
 
-    // bool res = Showdown(shin, father);
-    auto shinrank = shin.computeRank();
-    auto fatherrank = father.computeRank();
-    // if (res) cout << "Shin Wins!!!" << '\n';
-    // else cout << "Father Wins!!!" << '\n';
-    cout << "Shin: " << shinrank.first << ' ' << shinrank.second.first << ' ' << shinrank.second.second << '\n';
-    cout << "Father: " << fatherrank.first << ' ' << fatherrank.second.first << ' ' << fatherrank.second.second << '\n';
-}
+public:
+    enum Ranks
+    {
+        HIGHCARD,
+        ONEPAIR,
+        TWOPAIR,
+        TRIPPLE,
+        STRAIGHT,
+        FLUSH,
+        FULLHOUSE,
+        FOURCARD,
+        STRAIGHTFLUSH
+    };
 
-int main()
-{
-    test();
-}
+    void append_board(const pair<int, int> &card)
+    {
+        board.push_back(card);
+        for (Player* it : players)
+        {
+            (*it).append_hand(card);
+        }
+    }
 
-namespace Rank
-{
-    pair<int, pair<int, int>> isStraight(const vector<pair<int, int>> &hands)
+    void append_player(Player &p)
+    {   
+        players.push_back(&p);
+    }
+
+    pair<int, pair<int, int>> isStraight(Player &p) const
     {
         pair<int, pair<int, int>> rank = {0, {0, 0}};
         deque<int> dq;
-        for (auto it : hands)
+        for (auto it : p.hands)
         {
             if (dq.empty() || dq.back() - 1 == it.second)
                 dq.push_back(it.second);
@@ -115,14 +113,13 @@ namespace Rank
         }
         return rank;
     }
-
-    pair<int, pair<int, int>> isStraight(const vector<pair<int, int>> &hands, int s)
+    pair<int, pair<int, int>> isStraight(Player &p, int s) const
     {
         pair<int, pair<int, int>> rank = {0, {0, 0}};
         deque<pair<int, int>> dq;
-        for (auto it : hands)
+        for (auto it : p.hands)
         {
-            if (dq.empty() || dq.back().second - 1 == it.second && dq.back().first == it.first)
+            if (dq.empty() || (dq.back().second - 1 == it.second && dq.back().first == it.first))
                 dq.push_back(it);
             else
                 dq.clear();
@@ -135,23 +132,22 @@ namespace Rank
         }
         return rank;
     }
-
-    pair<int, pair<int, int>> isFlush(int *suits, const vector<pair<int, int>> &hands)
+    pair<int, pair<int, int>> isFlush(Player &p) const
     {
         pair<int, pair<int, int>> rank = {0, {0, 0}};
         for (int s = SPADE; s <= DIAMOND; s++)
         {
-            if (suits[s] < 5)
+            if (p.suits[s] < 5)
                 continue;
             rank.first = FLUSH;
-            for (auto it : hands)
+            for (auto it : p.hands)
                 if (it.first == s)
                 {
                     rank.second.first = it.second;
                     break;
                 }
 
-            int high = isStraight(hands, s).second.first;
+            int high = isStraight(p, s).second.first;
             if (high == 0)
                 break;
             rank.first = STRAIGHTFLUSH;
@@ -159,16 +155,15 @@ namespace Rank
         }
         return rank;
     }
-
-    pair<int, pair<int, int>> isPairs(int* nums)
+    pair<int, pair<int, int>> isPairs(Player &p) const
     {
         int mx = 0;
         pair<int, pair<int, int>> rank = {0, {0, 0}};
         for (int n = A; n > 1; n--)
         {
-            if (nums[n] == 4)
+            if (p.nums[n] == 4)
                 return {FOURCARD, {n, 0}};
-            else if (nums[n] == 3)
+            else if (p.nums[n] == 3)
             {
                 if (mx == 3)
                 {
@@ -190,7 +185,7 @@ namespace Rank
                     mx = 3;
                 }
             }
-            else if (nums[n] == 2)
+            else if (p.nums[n] == 2)
             {
                 if (mx == 3)
                 {
@@ -213,7 +208,7 @@ namespace Rank
                     mx = 2;
                 }
             }
-            else if (nums[n] == 1)
+            else if (p.nums[n] == 1)
             {
                 if (mx == 0)
                 {
@@ -225,74 +220,73 @@ namespace Rank
         }
         return rank;
     }
-};
-
-void Player::setCard(const pair<int, int> &card)
-{
-    hands.push_back(card);
-}
-
-void Player::inputCard(int n)
-{
-    while (n--)
-        setCard(parseCard());
-}
-
-void Player::prepare()
-{
-    for (auto it : board)
-        setCard(it);
-    for (auto it : hands)
+    pair<int, pair<int, int>> computeRank(Player &p) const
     {
-        auto [s, n] = it;
-        // deck[s][n] = id;
-        nums[n]++;
-        suits[s]++;
-        if (n == A)
+        auto Flush = isFlush(p);
+        if (Flush.first)
         {
-            // deck[s][1] = id;
-            nums[1]++;
-        }
-    }
-    sort(hands.begin(), hands.end(), cmp);
-}
-
-pair<int, pair<int, int>> Player::computeRank()
-{
-    prepare();
-    auto Flush = Rank::isFlush(suits, hands);
-    if (Flush.first)
-    {
-        return Flush;
-    }
-    else
-    {
-        auto Straight = Rank::isStraight(hands);
-        if (Straight.first)
-        {
-            return Straight;
+            return Flush;
         }
         else
         {
-            auto Pairs = Rank::isPairs(nums);
-            return Pairs;
+            auto Straight = isStraight(p);
+            if (Straight.first)
+            {
+                return Straight;
+            }
+            else
+                return isPairs(p);
         }
     }
-}
 
-bool Showdown(Player &p1, Player &p2)
+    bool Showdown()
+    {
+        return this->computeRank(*players[0]) > this->computeRank(*players[1]);
+    }
+};
+
+pair<int, int> parseCard();
+
+void test()
 {
-    return p1.computeRank() > p2.computeRank();
+    Table T;
+    Player shin;
+    Player father;
+    T.append_player(shin);
+    T.append_player(father);
+    cout << "P1: Shin Jun Yeop" << endl;
+    shin.append_hand(parseCard());
+    shin.append_hand(parseCard());
+    cout << "P2: Shin's Father" << endl;
+    father.append_hand(parseCard());
+    father.append_hand(parseCard());
+    cout << "Board" << endl;
+    T.append_board(parseCard());
+    T.append_board(parseCard());
+    T.append_board(parseCard());
+    T.append_board(parseCard());
+    T.append_board(parseCard());
+
+    bool res = T.Showdown();
+    if (res) cout << "Shin Wins!!!" << '\n';
+    else cout << "Father Wins!!!" << '\n';
+    auto shinrank = T.computeRank(shin);
+    auto fatherrank = T.computeRank(father);
+    cout << "Shin: " << shinrank.first << ' ' << shinrank.second.first << ' ' << shinrank.second.second << '\n';
+    cout << "Father: " << fatherrank.first << ' ' << fatherrank.second.first << ' ' << fatherrank.second.second << '\n';
 }
 
-int Player::idcnt = 0;
+int main()
+{
+    test();
+}
 
 pair<int, int> parseCard()
 {
     char i, j;
     int n, s;
     while (cin >> i >> j)
-    {   
+    {
         // input number
         if ('2' <= i && i <= '9')
             n = i - '0';
