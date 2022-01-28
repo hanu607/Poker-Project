@@ -43,17 +43,12 @@ public:
     {
         hands.insert(card);
         auto [s, n] = card;
-        // deck[s][n] = id;
         this->nums[n]++;
         this->suits[s]++;
         if (n == A)
-        {
-            // deck[s][1] = id;
             nums[1]++;
-        }
     };
     static int idcnt;
-    // static int deck[4][15];
 
     friend class Table;
 };
@@ -84,9 +79,7 @@ public:
     {
         board.push_back(card);
         for (Player* it : players)
-        {
             (*it).append_hand(card);
-        }
     }
 
     void append_player(Player &p)
@@ -118,8 +111,9 @@ public:
         pair<int, pair<int, int>> rank = {0, {0, 0}};
         deque<pair<int, int>> dq;
         for (auto it : p.hands)
-        {
-            if (dq.empty() || (dq.back().second - 1 == it.second && dq.back().first == it.first))
+        {   
+            if (it.first != s) continue;
+            if (dq.empty() || dq.back().second - 1 == it.second)
                 dq.push_back(it);
             else
                 dq.clear();
@@ -224,16 +218,12 @@ public:
     {
         auto Flush = isFlush(p);
         if (Flush.first)
-        {
             return Flush;
-        }
         else
         {
             auto Straight = isStraight(p);
             if (Straight.first)
-            {
                 return Straight;
-            }
             else
                 return isPairs(p);
         }
