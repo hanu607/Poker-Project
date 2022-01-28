@@ -34,6 +34,15 @@ enum Ranks
 
 class Player;
 class Table;
+struct cmp
+{
+    bool operator()(const pair<int, int> &lhs, const pair<int, int> &rhs) const
+    {
+        if (lhs.second == rhs.second)
+            return lhs.first > rhs.first;
+        return lhs.second > rhs.second;
+    }
+};
 
 class Player
 {
@@ -44,7 +53,7 @@ private:
     set<pair<int, int>, cmp> hands;
 
 public:
-    Player(Table& T);
+    Player(Table &T);
     void append_hand(const pair<int, int> &card);
 
     static int idcnt;
@@ -54,11 +63,10 @@ public:
 class Table
 {
 private:
-    vector<Player*> players;
+    vector<Player *> players;
     vector<pair<int, int>> board;
 
 public:
-
     void append_board(const pair<int, int> &card);
 
     void append_player(Player &p);
@@ -131,8 +139,10 @@ void test()
     T.append_board(parseCard());
 
     bool res = T.Showdown();
-    if (res) cout << "Shin Wins!!!" << '\n';
-    else cout << "Father Wins!!!" << '\n';
+    if (res)
+        cout << "Shin Wins!!!" << '\n';
+    else
+        cout << "Father Wins!!!" << '\n';
     auto shinrank = T.computeRank(shin);
     auto fatherrank = T.computeRank(father);
     cout << "Shin: " << shinrank.first << ' ' << shinrank.second.first << ' ' << shinrank.second.second << '\n';
@@ -143,16 +153,6 @@ int main()
 {
     test();
 }
-
-struct cmp
-{
-    bool operator()(const pair<int, int> &lhs, const pair<int, int> &rhs) const
-    {
-        if (lhs.second == rhs.second)
-            return lhs.first > rhs.first;
-        return lhs.second > rhs.second;
-    }
-};
 
 Player::Player(Table &T) : id(++idcnt), nums{}, suits{}
 {
@@ -188,8 +188,9 @@ pair<int, pair<int, int>> Table::isStraight(Player &p) const
     pair<int, pair<int, int>> rank = {0, {0, 0}};
     deque<int> dq(5);
     for (int n = A; n > 0; n--)
-    {   
-        if (!p.nums[n]) continue;
+    {
+        if (!p.nums[n])
+            continue;
         if (!dq.empty() && dq.back() - 1 != n)
             dq.clear();
         dq.push_back(n);
@@ -208,8 +209,10 @@ pair<int, pair<int, int>> Table::isStraight(Player &p, int s) const
     deque<pair<int, int>> dq(5);
     for (auto it : p.hands)
     {
-        if (it.first != s) continue;
-        if (it.second == A) p.hands.insert({s, 1});
+        if (it.first != s)
+            continue;
+        if (it.second == A)
+            p.hands.insert({s, 1});
         if (!dq.empty() && dq.back().second - 1 != it.second)
             dq.clear();
         dq.push_back(it);
