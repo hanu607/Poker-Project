@@ -1,28 +1,24 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include<set>
-#include<iostream>
-#include<vector>
 #include "hand.h"
+#include <vector>
 
-using namespace std;
-
-class Table; 
+class Table;
 
 class Player
 {
 private:
     int id;
-    vector<pair<int, int>> starting;
+    std::vector<std::pair<int, int>> starting;
     Hand fullhands;
 
 public:
-    Player(Table& T);
-    void insertStarting(const pair<int, int>& card);
-    void insertFullhands(const pair<int, int>& card);
+    Player(Table &T);
+    void insertStarting(const std::pair<int, int> &card);
+    void insertFullhands(const std::pair<int, int> &card);
 
-    pair<int, pair<int, int>> computeRank() const;
-  
+    std::pair<int, std::pair<int, int>> computeRank() const;
+
     static int idcnt;
 };
 

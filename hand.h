@@ -1,15 +1,11 @@
 #ifndef HAND_H
 #define HAND_H
-#include<set>
-#include<iostream>
-#include<deque>
+#include <set>
+#include <deque>
 
-
-using namespace std;
-class Table;
 struct cmp
 {
-    bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) const
+    bool operator()(const std::pair<int, int> &lhs, const std::pair<int, int> &rhs) const
     {
         if (lhs.second == rhs.second)
             return lhs.first > rhs.first;
@@ -17,23 +13,21 @@ struct cmp
     }
 };
 
-pair<int, int> parseCard();
-
 class Hand
 {
 private:
     int nums[15];
     int suits[4];
-    set<pair<int, int>, cmp> hands;
+    std::set<std::pair<int, int>, cmp> hands;
 
 public:
     Hand() : nums{}, suits{} {}
 
-    void insert(const pair<int, int>& card);
-    pair<int, pair<int, int>> isStraight() const;
-    pair<int, pair<int, int>> isStraight(const int& s) const;
-    pair<int, pair<int, int>> isFlush() const;
-    pair<int, pair<int, int>> isPairs() const;
+    void insert(const std::pair<int, int> &card);
+    std::pair<int, std::pair<int, int>> isStraight() const;
+    std::pair<int, std::pair<int, int>> isStraight(const int &s) const;
+    std::pair<int, std::pair<int, int>> isFlush() const;
+    std::pair<int, std::pair<int, int>> isPairs() const;
 };
 
 #endif

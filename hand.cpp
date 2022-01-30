@@ -1,61 +1,21 @@
 #include "hand.h"
 #include "enum.h"
 
-
-
-pair<int, int> parseCard()
-{
-    char i, j;
-    int n, s;
-    while (cin >> i >> j)
-    {
-        // input number
-        if ('2' <= i && i <= '9')
-            n = i - '0';
-        else if (i == 'T')
-            n = T;
-        else if (i == 'J')
-            n = J;
-        else if (i == 'Q')
-            n = Q;
-        else if (i == 'K')
-            n = K;
-        else if (i == 'A')
-            n = A;
-        else
-            continue;
-        // input suit
-        if (j == 's')
-            s = SPADE;
-        else if (j == 'h')
-            s = HEART;
-        else if (j == 'c')
-            s = CLUB;
-        else if (j == 'd')
-            s = DIAMOND;
-        else
-            continue;
-        // return {suit, number}
-        break;
-    }
-    return { s, n };
-}
-
-void Hand::insert(const pair<int, int>& card)
+void Hand::insert(const std::pair<int, int> &card)
 {
     hands.insert(card);
     int s = card.first;
     int n = card.second;
-    
+
     nums[n]++;
     suits[s]++;
     if (n == A)
         nums[1]++;
 }
-pair<int, pair<int, int>> Hand::isStraight() const
+std::pair<int, std::pair<int, int>> Hand::isStraight() const
 {
-    pair<int, pair<int, int>> rank = { 0, {0, 0} };
-    deque<int> dq(5);
+    std::pair<int, std::pair<int, int>> rank = {0, {0, 0}};
+    std::deque<int> dq(5);
     for (int n = A; n > 0; n--)
     {
         if (!nums[n])
@@ -72,17 +32,17 @@ pair<int, pair<int, int>> Hand::isStraight() const
     }
     return rank;
 }
-pair<int, pair<int, int>> Hand::isStraight(const int& s) const
+std::pair<int, std::pair<int, int>> Hand::isStraight(const int &s) const
 {
-    pair<int, pair<int, int>> rank = { 0, {0, 0} };
-    set<pair<int, int>, cmp> temp(hands);
-    deque<pair<int, int>> dq(5);
-    for (auto it : temp)
+    std::pair<int, std::pair<int, int>> rank = {0, {0, 0}};
+    std::set<std::pair<int, int>, cmp> temp(hands);
+    std::deque<std::pair<int, int>> dq(5);
+    for (const auto &it : temp)
     {
         if (it.first != s)
             continue;
         if (it.second == A)
-            temp.insert({ s, 1 });
+            temp.insert({s, 1});
         if (!dq.empty() && dq.back().second - 1 != it.second)
             dq.clear();
         dq.push_back(it);
@@ -93,18 +53,18 @@ pair<int, pair<int, int>> Hand::isStraight(const int& s) const
             break;
         }
     }
-    temp.erase({ s, 1 });
+    temp.erase({s, 1});
     return rank;
 }
-pair<int, pair<int, int>> Hand::isFlush() const
+std::pair<int, std::pair<int, int>> Hand::isFlush() const
 {
-    pair<int, pair<int, int>> rank = { 0, {0, 0} };
+    std::pair<int, std::pair<int, int>> rank = {0, {0, 0}};
     for (int s = SPADE; s <= DIAMOND; s++)
     {
         if (suits[s] < 5)
             continue;
         rank.first = FLUSH;
-        for (auto it : hands)
+        for (const auto &it : hands)
             if (it.first == s)
             {
                 rank.second.first = it.second;
@@ -119,14 +79,14 @@ pair<int, pair<int, int>> Hand::isFlush() const
     }
     return rank;
 }
-pair<int, pair<int, int>> Hand::isPairs() const
+std::pair<int, std::pair<int, int>> Hand::isPairs() const
 {
     int mx = 0;
-    pair<int, pair<int, int>> rank = { 0, {0, 0} };
+    std::pair<int, std::pair<int, int>> rank = {0, {0, 0}};
     for (int n = A; n > 1; n--)
     {
         if (nums[n] == 4)
-            return { FOUROFAKIND, {n, 0} };
+            return {FOUROFAKIND, {n, 0}};
         else if (nums[n] == 3)
         {
             if (mx == 3)
@@ -184,4 +144,3 @@ pair<int, pair<int, int>> Hand::isPairs() const
     }
     return rank;
 }
-
