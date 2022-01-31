@@ -12,7 +12,7 @@ private:
 public:
     void insertCommunity(const std::pair<int, int> &card);
     void appendPlayer(Player &p);
-
+    std::vector<int> computeRank(std::vector<std::pair<int, int>> hand) const;
     bool Showdown() const;
 };
 #endif

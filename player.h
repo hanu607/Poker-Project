@@ -1,6 +1,5 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include "hand.h"
 #include <vector>
 
 class Table;
@@ -9,15 +8,12 @@ class Player
 {
 private:
     int id;
-    std::vector<std::pair<int, int>> starting;
-    Hand fullhands;
+    std::vector<std::pair<int, int>> hand;
 
 public:
     Player(Table &T);
-    void insertStarting(const std::pair<int, int> &card);
-    void insertFullhands(const std::pair<int, int> &card);
-
-    std::pair<int, std::pair<int, int>> computeRank() const;
+    void insertHand(const std::pair<int, int> &card);
+    std::vector<std::pair<int, int>> getHand() const;
 
     static int idcnt;
 };

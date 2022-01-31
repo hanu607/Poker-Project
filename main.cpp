@@ -1,5 +1,4 @@
 #include "enum.h"
-#include "hand.h"
 #include "player.h"
 #include "table.h"
 #include <iostream>
@@ -48,11 +47,11 @@ void test()
     Player shin(T);
     Player father(T);
     std::cout << "P1: Shin Jun Yeop" << '\n';
-    shin.insertStarting(parseCard());
-    shin.insertStarting(parseCard());
+    shin.insertHand(parseCard());
+    shin.insertHand(parseCard());
     std::cout << "P2: Shin's Father" << '\n';
-    father.insertStarting(parseCard());
-    father.insertStarting(parseCard());
+    father.insertHand(parseCard());
+    father.insertHand(parseCard());
     std::cout << "Board" << '\n';
     T.insertCommunity(parseCard());
     T.insertCommunity(parseCard());
@@ -65,10 +64,13 @@ void test()
         std::cout << "Shin Wins!!!" << '\n';
     else
         std::cout << "Father Wins!!!" << '\n';
-    auto shinrank = shin.computeRank();
-    auto fatherrank = father.computeRank();
-    std::cout << "Shin: " << shinrank.first << ' ' << shinrank.second.first << ' ' << shinrank.second.second << '\n';
-    std::cout << "Father: " << fatherrank.first << ' ' << fatherrank.second.first << ' ' << fatherrank.second.second << '\n';
+    auto shinrank = T.computeRank(shin.getHand());
+    auto fatherrank = T.computeRank(father.getHand());
+    for (auto e : shinrank)
+        std::cout << e << ' ';
+    std::cout << '\n';
+    for (auto e : fatherrank)
+        std::cout << e << ' ';
 }
 
 int main()

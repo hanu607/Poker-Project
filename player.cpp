@@ -1,32 +1,16 @@
 #include "player.h"
 #include "table.h"
-#include "hand.h"
 
 Player::Player(Table &T) : id(++idcnt)
 {
     T.appendPlayer(*this);
 }
-void Player::insertStarting(const std::pair<int, int> &card)
+void Player::insertHand(const std::pair<int, int> &card)
 {
-    starting.push_back(card);
-    fullhands.insert(card);
+    hand.push_back(card);
 };
-void Player::insertFullhands(const std::pair<int, int> &card)
+std::vector<std::pair<int, int>> Player::getHand() const
 {
-    fullhands.insert(card);
-}
-std::pair<int, std::pair<int, int>> Player::computeRank() const
-{
-    auto rank = fullhands.isFlush();
-    if (rank.first)
-        return rank;
-    else
-    {
-        rank = fullhands.isStraight();
-        if (rank.first)
-            return rank;
-        else
-            return fullhands.isPairs();
-    }
+    return hand;
 }
 int Player::idcnt = 0;
