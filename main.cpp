@@ -64,8 +64,8 @@ void test()
         std::cout << "Shin Wins!!!" << '\n';
     else
         std::cout << "Father Wins!!!" << '\n';
-    auto shinrank = T.computeRank(shin.getHand());
-    auto fatherrank = T.computeRank(father.getHand());
+    auto shinrank = T.computeRank(shin);
+    auto fatherrank = T.computeRank(father);
     for (auto e : shinrank)
         std::cout << e << ' ';
     std::cout << '\n';

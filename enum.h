@@ -20,7 +20,7 @@ enum Rank
 {
     HIGHCARD,
     ONEPAIR,
-    TWOPAIR,
+    TWOPAIRS,
     THREEOFAKIND,
     STRAIGHT,
     FLUSH,
