@@ -11,7 +11,7 @@ private:
     std::vector<std::pair<int, int>> hand;
 
 public:
-    Player(Table &T);
+    Player() : id(idcnt++){};
     void insertHand(const std::pair<int, int> &card);
     std::vector<std::pair<int, int>> getHand() const;
 

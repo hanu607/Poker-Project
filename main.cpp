@@ -9,7 +9,6 @@ std::pair<int, int> parseCard()
     int n, s;
     while (std::cin >> i >> j)
     {
-        // input number
         if ('2' <= i && i <= '9')
             n = i - '0';
         else if (i == 'T')
@@ -24,7 +23,6 @@ std::pair<int, int> parseCard()
             n = A;
         else
             continue;
-        // input suit
         if (j == 's')
             s = SPADE;
         else if (j == 'h')
@@ -35,45 +33,49 @@ std::pair<int, int> parseCard()
             s = DIAMOND;
         else
             continue;
-        // return {suit, number}
         break;
     }
     return {s, n};
 }
 
-void test()
+void test2()
 {
     Table T;
-    Player shin(T);
-    Player father(T);
-    std::cout << "P1: Shin Jun Yeop" << '\n';
-    shin.insertHand(parseCard());
-    shin.insertHand(parseCard());
-    std::cout << "P2: Shin's Father" << '\n';
-    father.insertHand(parseCard());
-    father.insertHand(parseCard());
-    std::cout << "Board" << '\n';
+    std::cout << "P1: ";
+    T.insertHand(0, parseCard());
+    T.insertHand(0, parseCard());
+    std::cout << "P2: ";
+    T.insertHand(1, parseCard());
+    T.insertHand(1, parseCard());
+    std::cout << "Board: ";
     T.insertCommunity(parseCard());
     T.insertCommunity(parseCard());
     T.insertCommunity(parseCard());
     T.insertCommunity(parseCard());
     T.insertCommunity(parseCard());
 
-    bool res = T.Showdown();
-    if (res)
-        std::cout << "Shin Wins!!!" << '\n';
-    else
-        std::cout << "Father Wins!!!" << '\n';
-    auto shinrank = T.computeRank(shin);
-    auto fatherrank = T.computeRank(father);
-    for (auto e : shinrank)
-        std::cout << e << ' ';
-    std::cout << '\n';
-    for (auto e : fatherrank)
-        std::cout << e << ' ';
+    std::cout << T.Showdown() << '\n';
 }
 
 int main()
 {
-    test();
+    test2();
 }
+
+/*
+TO DO:
+
+Major:
+Complete bruteforce function.
+Update a function caculating odds.
+
+More:
+Update the user prompt not to run the program repeatedly;
+Modify Showdown function in Table for multiple players.
+Modify bruteforce to work with the player without hand.
+
+Options:
+Modify enums to enum classes.
+Convert if-else to switch-case for better performance.
+Comment whole codes.
+*/

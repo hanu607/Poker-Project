@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <deque>
 
-std::vector<int> isStraight(std::vector<std::pair<int, int>>& hand)
+std::vector<int> isStraight(std::vector<std::pair<int, int>> &hand)
 {
     if (hand.front().second == A)
         hand.push_back({-1, 1});
@@ -26,7 +26,7 @@ std::vector<int> isStraight(std::vector<std::pair<int, int>>& hand)
     return ret;
 };
 
-std::vector<int> isStraightFlush(std::vector<std::pair<int, int>>& hand, const int &s)
+std::vector<int> isStraightFlush(std::vector<std::pair<int, int>> &hand, const int &s)
 {
     std::vector<int> ret(1);
     std::deque<int> dq;
@@ -52,7 +52,7 @@ std::vector<int> isStraightFlush(std::vector<std::pair<int, int>>& hand, const i
     return ret;
 };
 
-std::vector<int> isFlush(std::vector<std::pair<int, int>>& hand, int suits[])
+std::vector<int> isFlush(std::vector<std::pair<int, int>> &hand, int suits[])
 {
     std::vector<int> ret(1);
     for (int s = SPADE; s <= DIAMOND; s++)

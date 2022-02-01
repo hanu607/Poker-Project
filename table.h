@@ -6,14 +6,22 @@
 class Table
 {
 private:
-    std::vector<Player *> players;
+    std::vector<Player> players;
     std::vector<std::pair<int, int>> community;
 
 public:
+    Table(int n = 2)
+    {
+        if (n < 2)
+            n = 2;
+        while (n--)
+            appendPlayer();
+    };
+    void appendPlayer();
+    void insertHand(const int &i, const std::pair<int, int> &card);
     void insertCommunity(const std::pair<int, int> &card);
-    void appendPlayer(Player &p);
     std::vector<int> computeRank(const Player &p) const;
-    bool Showdown() const;
+    int Showdown() const;
 };
 
 #endif
