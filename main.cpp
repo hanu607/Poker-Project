@@ -38,7 +38,7 @@ std::pair<int, int> parseCard()
     return {s, n};
 }
 
-void test2()
+void test()
 {
     Table T;
     std::cout << "P1: ";
@@ -59,14 +59,26 @@ void test2()
 
 int main()
 {
-    test2();
+    Table T;
+    std::cout << "P1: ";
+    T.insertHand(0, parseCard());
+    T.insertHand(0, parseCard());
+    std::cout << "P2: ";
+    T.insertHand(1, parseCard());
+    T.insertHand(1, parseCard());
+    std::cout << "Board: ";
+    int n; std::cin >> n;
+    while (n--)
+        T.insertCommunity(parseCard());
+    int* res = Bruteforce(T);
+    for (int i = 0; i < 3; i++) std::cout << res[i] << ' ';
 }
 
 /*
 TO DO:
 
 Major:
-Complete bruteforce function.
+DEBUG
 Update a function caculating odds.
 
 More:

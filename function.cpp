@@ -1,5 +1,6 @@
 #include "enum.h"
 #include "function.h"
+#include "table.h"
 #include <algorithm>
 #include <deque>
 
@@ -135,3 +136,59 @@ std::vector<int> isPairs(int nums[])
 
     return ret;
 };
+
+// int wins = 0;
+// int ties = 0;
+// int loses = 0;
+// double odds = 0;
+
+int* Bruteforce(Table &T)
+{
+    bfSuit(T, T.cur_size);
+    // odds = (wins / (double)(wins + ties + loses))*100;
+    return T.res;
+}
+void bfSuit(Table &T, int k)
+{
+    if (k == 5)
+    {
+        bfNum(T, T.cur_size);
+        return;
+    }
+
+    int st = k > T.cur_size ? T.community[k - 1].first : 0;
+    for (int s = st; s <= DIAMOND; s++)
+    {
+        T.community[k].first = s;
+        bfSuit(T, k + 1);
+    }
+}
+void bfNum(Table &T, int k)
+{
+    if (k == 5)
+    {
+        T.res[T.Showdown() + 1]++;
+        // switch (T.Showdown())
+        // {
+        // case 1:
+        //     wins++;
+        //     break;
+        // case 0:
+        //     ties++;
+        //     break;
+        // case -1:
+        //     loses++;
+        //     break;
+        // }
+        return;
+    }
+
+    int st = (k > T.cur_size && T.community[k - 1].first == T.community[k].first) ? T.community[k - 1].second + 1 : 2;
+    for (int n = st; n <= A; n++)
+    {
+        if (T.deck[T.community[k].first][n])
+            continue;
+        T.community[k].second = n;
+        bfNum(T, k + 1);
+    }
+}

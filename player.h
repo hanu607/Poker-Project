@@ -9,9 +9,10 @@ class Player
 private:
     int id;
     std::vector<std::pair<int, int>> hand;
+    int cur_size;
 
 public:
-    Player() : id(idcnt++){};
+    Player();
     void insertHand(const std::pair<int, int> &card);
     std::vector<std::pair<int, int>> getHand() const;
 
