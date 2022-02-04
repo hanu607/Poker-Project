@@ -4,17 +4,16 @@
 #include <algorithm>
 #include <deque>
 
-std::array<int, 6> isStraight(std::array<std::pair<int, int>, 8> &hand)
+std::array<int, 6> isStraight(int nums[15])
 {
-    if (hand.front().second == A)
-        hand[7] = {-1, 1};
     std::array<int, 6> ret{};
     std::deque<int> dq;
-    for (const auto &card : hand)
-    {
-        if (!dq.empty() && dq.back() - 1 != card.second)
+    for (int n = A; n > 0; n--)
+    {   
+        if (!nums[n]) continue;
+        if (!dq.empty() && dq.back() - 1 != n)
             dq.clear();
-        dq.push_back(card.second);
+        dq.push_back(n);
         if (dq.size() == 5)
         {
             ret[0] = STRAIGHT;
@@ -28,9 +27,8 @@ std::array<int, 6> isStraightFlush(std::array<std::pair<int, int>, 8> &hand, con
 {
     std::array<int, 6> ret{};
     std::deque<int> dq;
-    for (int i = 0; i < hand.size(); i++)
+    for (const auto &card : hand)
     {
-        const auto &card = hand[i];
         if (card.first != s)
             continue;
         if (card.second == A)
@@ -45,6 +43,7 @@ std::array<int, 6> isStraightFlush(std::array<std::pair<int, int>, 8> &hand, con
             break;
         }
     }
+    hand[7] = {-1, 0};
     return ret;
 };
 std::array<int, 6> isFlush(std::array<std::pair<int, int>, 8> &hand, int suits[4])
@@ -55,12 +54,14 @@ std::array<int, 6> isFlush(std::array<std::pair<int, int>, 8> &hand, int suits[4
         if (suits[s] < 5)
             continue;
         ret[0] = FLUSH;
-        for (const auto &card : hand)
-            if (card.first == s)
-            {
-                ret[1] = card.second;
+        {
+            int pos = 1;
+            for (const auto &card : hand)
+                if (card.first == s)
+                    ret[pos++] = card.second;
+            if (pos > 5)
                 break;
-            }
+        }
 
         if (const auto &tmp = isStraightFlush(hand, s); tmp[0])
         {
@@ -154,8 +155,17 @@ void bfSuit(Table &T, int k)
 void bfNum(Table &T, int k)
 {
     if (k == 5)
-    {
-        T.res[T.Showdown() + 1]++; //
+    {   
+        T.res[T.Showdown() + 1]++;
+
+        /*
+        T.computeRank(T.players[1]);
+        if (T.Showdown() == -1) {
+            for (const auto &card : T.community)
+                printf("(%d, %d) ", card.first, card.second);
+            std::cout << '\n';
+        }
+        */
         return;
     }
 

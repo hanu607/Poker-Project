@@ -41,11 +41,12 @@ std::array<int, 6> Table::computeRank(const Player &p) const
         suits[hand[i].first]++;
         nums[hand[i].second]++;
     }
+    nums[1] = nums[A];
 
     std::array<int, 6> rank;
     if (rank = isFlush(hand, suits); !rank.front())
     {
-        if (rank = isStraight(hand); !rank.front())
+        if (rank = isStraight(nums); !rank.front())
             return isPairs(nums);
         return rank;
     }

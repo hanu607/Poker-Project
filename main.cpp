@@ -56,7 +56,7 @@ int main()
     for (int i = 0; i < 3; i++)
         std::cout << res[i] << ' ';
     std::cout << '\n';
-    printf("%f %%", 100 * (double)res[0] / (double)(res[0] + res[1] + res[2]));
+    printf("%f %%", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
 }
 
 /*
@@ -64,15 +64,15 @@ TO DO:
 
 Major:
 Update a function caculating odds.
+Implement the user prompt.
 Improve perfromance.
 
 More:
-Update the user prompt not to run the program repeatedly.
 Modify Showdown function in Table for multiple players.
 Modify bruteforce to work with the player without hand.
 
 Options:
-Modify enums to enum classes.
+Convert enums to enum classes.
 Convert if-else to switch-case for better performance.
 Comment whole codes.
 */
