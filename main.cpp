@@ -38,25 +38,6 @@ std::pair<int, int> parseCard()
     return {s, n};
 }
 
-void test()
-{
-    Table T;
-    std::cout << "P1: ";
-    T.insertHand(0, parseCard());
-    T.insertHand(0, parseCard());
-    std::cout << "P2: ";
-    T.insertHand(1, parseCard());
-    T.insertHand(1, parseCard());
-    std::cout << "Board: ";
-    T.insertCommunity(parseCard());
-    T.insertCommunity(parseCard());
-    T.insertCommunity(parseCard());
-    T.insertCommunity(parseCard());
-    T.insertCommunity(parseCard());
-
-    std::cout << T.Showdown() << '\n';
-}
-
 int main()
 {
     Table T;
@@ -67,22 +48,26 @@ int main()
     T.insertHand(1, parseCard());
     T.insertHand(1, parseCard());
     std::cout << "Board: ";
-    int n; std::cin >> n;
+    int n;
+    std::cin >> n;
     while (n--)
         T.insertCommunity(parseCard());
-    int* res = Bruteforce(T);
-    for (int i = 0; i < 3; i++) std::cout << res[i] << ' ';
+    int *res = Bruteforce(T);
+    for (int i = 0; i < 3; i++)
+        std::cout << res[i] << ' ';
+    std::cout << '\n';
+    printf("%f %%", 100 * (double)res[0] / (double)(res[0] + res[1] + res[2]));
 }
 
 /*
 TO DO:
 
 Major:
-DEBUG
 Update a function caculating odds.
+Improve perfromance.
 
 More:
-Update the user prompt not to run the program repeatedly;
+Update the user prompt not to run the program repeatedly.
 Modify Showdown function in Table for multiple players.
 Modify bruteforce to work with the player without hand.
 

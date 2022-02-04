@@ -1,22 +1,19 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include <vector>
+#include <array>
 
 class Table;
 
 class Player
 {
 private:
-    int id;
-    std::vector<std::pair<int, int>> hand;
+    std::array<std::pair<int, int>, 2> hand;
     int cur_size;
 
 public:
     Player();
     void insertHand(const std::pair<int, int> &card);
-    std::vector<std::pair<int, int>> getHand() const;
-
-    static int idcnt;
+    std::array<std::pair<int, int>, 2> getHand() const;
 };
 
 #endif

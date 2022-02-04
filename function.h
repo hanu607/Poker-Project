@@ -1,10 +1,10 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
-#include <vector>
+#include <array>
 
-std::vector<int> isStraight(std::vector<std::pair<int, int>> &hand);
-std::vector<int> isStraightFlush(std::vector<std::pair<int, int>> &hand, const int &s);
-std::vector<int> isFlush(std::vector<std::pair<int, int>> &hand, int suits[]);
-std::vector<int> isPairs(int nums[]);
+std::array<int, 6> isStraight(std::array<std::pair<int, int>, 8> &hand);
+std::array<int, 6> isStraightFlush(std::array<std::pair<int, int>, 8> &hand, const int &s);
+std::array<int, 6> isFlush(std::array<std::pair<int, int>, 8> &hand, int suits[4]);
+std::array<int, 6> isPairs(int nums[15]);
 
 #endif

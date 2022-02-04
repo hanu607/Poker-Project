@@ -4,11 +4,11 @@
 #include <algorithm>
 #include <deque>
 
-std::vector<int> isStraight(std::vector<std::pair<int, int>> &hand)
+std::array<int, 6> isStraight(std::array<std::pair<int, int>, 8> &hand)
 {
     if (hand.front().second == A)
-        hand.push_back({-1, 1});
-    std::vector<int> ret(1);
+        hand[7] = {-1, 1};
+    std::array<int, 6> ret{};
     std::deque<int> dq;
     for (const auto &card : hand)
     {
@@ -18,18 +18,15 @@ std::vector<int> isStraight(std::vector<std::pair<int, int>> &hand)
         if (dq.size() == 5)
         {
             ret[0] = STRAIGHT;
-            ret.push_back(dq.front());
+            ret[1] = dq.front();
             break;
         }
     }
-    if (hand.back().second == 1)
-        hand.pop_back();
     return ret;
 };
-
-std::vector<int> isStraightFlush(std::vector<std::pair<int, int>> &hand, const int &s)
+std::array<int, 6> isStraightFlush(std::array<std::pair<int, int>, 8> &hand, const int &s)
 {
-    std::vector<int> ret(1);
+    std::array<int, 6> ret{};
     std::deque<int> dq;
     for (int i = 0; i < hand.size(); i++)
     {
@@ -37,25 +34,22 @@ std::vector<int> isStraightFlush(std::vector<std::pair<int, int>> &hand, const i
         if (card.first != s)
             continue;
         if (card.second == A)
-            hand.push_back({s, 1});
+            hand[7] = {s, 1};
         if (!dq.empty() && dq.back() - 1 != card.second)
             dq.clear();
         dq.push_back(card.second);
         if (dq.size() == 5)
         {
             ret[0] = STRAIGHTFLUSH;
-            ret.push_back(dq.front());
+            ret[1] = dq.front();
             break;
         }
     }
-    if (hand.back().second == 1)
-        hand.pop_back();
     return ret;
 };
-
-std::vector<int> isFlush(std::vector<std::pair<int, int>> &hand, int suits[])
+std::array<int, 6> isFlush(std::array<std::pair<int, int>, 8> &hand, int suits[4])
 {
-    std::vector<int> ret(1);
+    std::array<int, 6> ret{};
     for (int s = SPADE; s <= DIAMOND; s++)
     {
         if (suits[s] < 5)
@@ -64,7 +58,7 @@ std::vector<int> isFlush(std::vector<std::pair<int, int>> &hand, int suits[])
         for (const auto &card : hand)
             if (card.first == s)
             {
-                ret.push_back(card.second);
+                ret[1] = card.second;
                 break;
             }
 
@@ -76,10 +70,9 @@ std::vector<int> isFlush(std::vector<std::pair<int, int>> &hand, int suits[])
     }
     return ret;
 };
-
-std::vector<int> isPairs(int nums[])
+std::array<int, 6> isPairs(int nums[15])
 {
-    std::vector<int> ret(1);
+    std::array<int, 6> ret{};
     std::vector<std::pair<int, int>> arr;
     for (int n = A; n > 1; n--)
         if (nums[n])
@@ -92,8 +85,9 @@ std::vector<int> isPairs(int nums[])
                  return lhs.first > rhs.first;
              return lhs.second > rhs.second;
          });
+    sort(arr.begin() + 2, arr.end(), std::greater<>());
 
-    int append = 1;
+    int append = 0;
     if (arr[0].second == 4)
     {
         ret[0] = FOUROFAKIND;
@@ -132,20 +126,14 @@ std::vector<int> isPairs(int nums[])
     }
 
     for (int i = 0; i < append; i++)
-        ret.push_back(arr[i].first);
+        ret[i + 1] = (arr[i].first);
 
     return ret;
 };
 
-// int wins = 0;
-// int ties = 0;
-// int loses = 0;
-// double odds = 0;
-
-int* Bruteforce(Table &T)
+int *Bruteforce(Table &T)
 {
     bfSuit(T, T.cur_size);
-    // odds = (wins / (double)(wins + ties + loses))*100;
     return T.res;
 }
 void bfSuit(Table &T, int k)
@@ -167,19 +155,7 @@ void bfNum(Table &T, int k)
 {
     if (k == 5)
     {
-        T.res[T.Showdown() + 1]++;
-        // switch (T.Showdown())
-        // {
-        // case 1:
-        //     wins++;
-        //     break;
-        // case 0:
-        //     ties++;
-        //     break;
-        // case -1:
-        //     loses++;
-        //     break;
-        // }
+        T.res[T.Showdown() + 1]++; //
         return;
     }
 
