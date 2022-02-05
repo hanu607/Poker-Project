@@ -22,8 +22,8 @@ public:
     int Showdown() const;
 
     friend int *Bruteforce(Table &T);
-    friend void bfSuit(Table &T, int k);
-    friend void bfNum(Table &T, int k);
+    friend void bfSuit(Table &T, const int &k);
+    friend void bfNum(Table &T, const int &k);
 };
 
 #endif

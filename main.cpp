@@ -2,6 +2,7 @@
 #include "player.h"
 #include "table.h"
 #include <iostream>
+#include <time.h>
 
 std::pair<int, int> parseCard()
 {
@@ -52,11 +53,17 @@ int main()
     std::cin >> n;
     while (n--)
         T.insertCommunity(parseCard());
+
+    clock_t start, end;
+    start = clock();
     int *res = Bruteforce(T);
+    end = clock();
     for (int i = 0; i < 3; i++)
         std::cout << res[i] << ' ';
     std::cout << '\n';
-    printf("%f %%", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
+    printf("%f %%\n", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
+    double t = (double)(end - start);
+    std::cout << t;
 }
 
 /*
