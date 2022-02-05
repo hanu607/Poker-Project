@@ -21,9 +21,8 @@ public:
     std::array<int, 6> computeRank(const Player &p) const;
     int Showdown() const;
 
-    friend int *Bruteforce(Table &T);
-    friend void bfSuit(Table &T, const int &k);
-    friend void bfNum(Table &T, const int &k);
+    friend int *bruteforce(Table &T);
+    friend void backtracking(Table &T, const int &k);
 };
 
 #endif

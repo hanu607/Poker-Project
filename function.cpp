@@ -127,94 +127,35 @@ std::array<int, 6> isPairs(int nums[15])
         break;
     }
 
-    /*
-    if (arr[0].second == 4)
-    {
-        ret[0] = FOUROFAKIND;
-        append = 2;
-    }
-    else if (arr[0].second == 3)
-    {
-        if (arr[1].second > 1)
-        {
-            ret[0] = FULLHOUSE;
-            append = 2;
-        }
-        else
-        {
-            ret[0] = THREEOFAKIND;
-            append = 3;
-        }
-    }
-    else if (arr[0].second == 2)
-    {
-        if (arr[1].second == 2)
-        {
-            ret[0] = TWOPAIRS;
-            append = 3;
-        }
-        else
-        {
-            ret[0] = ONEPAIR;
-            append = 4;
-        }
-    }
-    else
-    {
-        ret[0] = HIGHCARD;
-        append = 5;
-    }
-    */
-
     for (int i = 0; i < append; i++)
         ret[i + 1] = arr[i].first;
 
     return ret;
 };
 
-int *Bruteforce(Table &T)
+int *bruteforce(Table &T)
 {
-    bfSuit(T, T.cur_size);
+    backtracking(T, T.cur_size);
     return T.res;
 }
-void bfSuit(Table &T, const int &k)
-{
-    if (k == 5)
-    {
-        bfNum(T, T.cur_size);
-        return;
-    }
-
-    int st = k > T.cur_size ? T.community[k - 1].first : 0;
-    for (int s = st; s <= DIAMOND; s++)
-    {
-        T.community[k].first = s;
-        bfSuit(T, k + 1);
-    }
-}
-void bfNum(Table &T, const int &k)
+void backtracking(Table &T, const int &k)
 {
     if (k == 5)
     {
         T.res[T.Showdown() + 1]++;
-
-        /*
-        T.computeRank(T.players[1]);
-        if (T.Showdown() == -1) {
-            for (const auto &card : T.community)
-                printf("(%d, %d) ", card.first, card.second);
-            std::cout << '\n';
-        }
-        */
         return;
     }
 
-    int st = (k > T.cur_size && T.community[k - 1].first == T.community[k].first) ? T.community[k - 1].second + 1 : 2;
-    for (int n = st; n <= A; n++)
+    int s_start = k > T.cur_size ? T.community[k - 1].first : 0;
+    for (int s = s_start; s <= DIAMOND; s++)
     {
-        if (T.deck[T.community[k].first][n])
-            continue;
-        T.community[k].second = n;
-        bfNum(T, k + 1);
+        int n_start = (k > T.cur_size && T.community[k - 1].first == s) ? T.community[k - 1].second + 1 : 2;
+        for (int n = n_start; n <= A; n++)
+        {
+            if (T.deck[s][n])
+                continue;
+            T.community[k] = {s, n};
+            backtracking(T, k + 1);
+        }
     }
 }

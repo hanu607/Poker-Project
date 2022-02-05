@@ -42,10 +42,10 @@ std::pair<int, int> parseCard()
 int main()
 {
     Table T;
-    std::cout << "P1: ";
+    std::cout << "Hero: ";
     T.insertHand(0, parseCard());
     T.insertHand(0, parseCard());
-    std::cout << "P2: ";
+    std::cout << "Villain: ";
     T.insertHand(1, parseCard());
     T.insertHand(1, parseCard());
     std::cout << "Board: ";
@@ -56,14 +56,14 @@ int main()
 
     clock_t start, end;
     start = clock();
-    int *res = Bruteforce(T);
+    int *res = bruteforce(T);
     end = clock();
-    for (int i = 0; i < 3; i++)
-        std::cout << res[i] << ' ';
-    std::cout << '\n';
-    printf("%f %%\n", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
+
+    printf("Win: %f %%\n", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
+    printf("Tie: %f %%\n", 100 * (double)res[1] / (double)(res[0] + res[1] + res[2]));
+    printf("Lose: %f %%\n", 100 * (double)res[0] / (double)(res[0] + res[1] + res[2]));
     double t = (double)(end - start);
-    std::cout << t;
+    printf("%fs elapsed.\n", t / 1000);
 }
 
 /*

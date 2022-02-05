@@ -2,8 +2,6 @@
 #define PLAYER_H
 #include <array>
 
-class Table;
-
 class Player
 {
 private:
