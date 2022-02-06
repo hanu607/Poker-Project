@@ -34,7 +34,7 @@ std::array<int, 6> Table::computeRank(const Player &p) const
         std::copy(community.cbegin(), community.cend(), hand.begin() + 2);
     }
 
-    std::sort(hand.begin(), hand.end(), [](const auto &lhs, const auto &rhs) -> bool
+    std::sort(hand.begin(), hand.begin() + 7, [](const auto &lhs, const auto &rhs) -> bool
               { return lhs.second > rhs.second; });
     for (int i = 0; i < 7; i++)
     {

@@ -76,19 +76,22 @@ std::array<int, 6> isFlush(std::array<std::pair<int, int>, 8> &hand, int suits[4
 std::array<int, 6> isPairs(int nums[15])
 {
     std::array<int, 6> ret{};
-    std::array<std::pair<int, int>, 13> arr;
-    for (int n = A; n > 1; n--)
+    std::array<std::pair<int, int>, 7> arr;
+    int idx = 0;
+    for (int n = A; n >= 2; n--)
+    {
         if (nums[n])
-            arr[A - n] = {n, nums[n]};
+            arr[idx++] = {n, nums[n]};
+    }
 
-    sort(arr.begin(), arr.end(),
+    sort(arr.begin(), arr.begin() + idx,
          [](const auto &lhs, const auto &rhs) -> bool
          {
              if (lhs.second == rhs.second)
                  return lhs.first > rhs.first;
              return lhs.second > rhs.second;
          });
-    sort(arr.begin() + 2, arr.end(), std::greater<>());
+    sort(arr.begin() + 2, arr.begin() + 4, std::greater<>());
 
     int append;
     switch (arr[0].second)
@@ -149,8 +152,8 @@ void backtracking(Table &T, const int &k)
     int s_start = k > T.cur_size ? T.community[k - 1].first : 0;
     for (int s = s_start; s <= DIAMOND; s++)
     {
-        int n_start = (k > T.cur_size && T.community[k - 1].first == s) ? T.community[k - 1].second + 1 : 2;
-        for (int n = n_start; n <= A; n++)
+        int n_start = (k > T.cur_size && T.community[k - 1].first == s) ? T.community[k - 1].second - 1 : A;
+        for (int n = n_start; n >= 2; n--)
         {
             if (T.deck[s][n])
                 continue;
