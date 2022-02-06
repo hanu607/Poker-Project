@@ -7,22 +7,22 @@
 class Table
 {
 private:
-    bool deck[4][15];
+    std::array<std::array<int, 15>, 4> deck;
     std::vector<Player> players;
     std::array<std::pair<int, int>, 5> community;
     int cur_size;
-    int res[3];
 
 public:
     Table();
     void appendPlayer();
-    void insertHand(const int &i, const std::pair<int, int> &card);
-    void insertCommunity(const std::pair<int, int> &card);
-    std::array<int, 6> computeRank(const Player &p) const;
-    int Showdown() const;
-
-    friend int *bruteforce(Table &T);
-    friend void backtracking(Table &T, const int &k);
+    void insertStarting(const int idx, const std::pair<int, int> card);
+    void insertCommunity(const std::pair<int, int> card);
+    std::pair<double, double> getResult(const int idx);
+    
+    void bruteforce();
+    void backtracking(const int k);
+    void computeRank(const int idx);
+    void showdown();
 };
 
 #endif

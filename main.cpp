@@ -40,14 +40,14 @@ std::pair<int, int> parseCard()
 }
 
 int main()
-{
+{   
     Table T;
     std::cout << "Hero: ";
-    T.insertHand(0, parseCard());
-    T.insertHand(0, parseCard());
+    T.insertStarting(0, parseCard());
+    T.insertStarting(0, parseCard());
     std::cout << "Villain: ";
-    T.insertHand(1, parseCard());
-    T.insertHand(1, parseCard());
+    T.insertStarting(1, parseCard());
+    T.insertStarting(1, parseCard());
     std::cout << "Board: ";
     int n;
     std::cin >> n;
@@ -56,30 +56,30 @@ int main()
 
     clock_t start, end;
     start = clock();
-    int *res = bruteforce(T);
+    T.bruteforce();
     end = clock();
-
-    printf("Win: %f %%\n", 100 * (double)res[2] / (double)(res[0] + res[1] + res[2]));
-    printf("Tie: %f %%\n", 100 * (double)res[1] / (double)(res[0] + res[1] + res[2]));
-    printf("Lose: %f %%\n", 100 * (double)res[0] / (double)(res[0] + res[1] + res[2]));
     double t = (double)(end - start);
     printf("%fs elapsed.\n", t / 1000);
+
+    for (int i = 0; i < 2; i++)
+    {
+        const auto &temp = T.getResult(i);
+        printf("(%f %%, %f %%)\n", temp.first * 100, temp.second * 100);
+    }
 }
 
 /*
 TO DO:
 
 Major:
-Update a function caculating odds.
 Implement the user prompt.
-Improve perfromance.
+Make the program robust.
 
 More:
-Modify Showdown function in Table for multiple players.
-Modify bruteforce to work with the player without hand.
+Modify program to work with more than 2 players.
+Modify bruteforce to work with a player without hand.
 
 Options:
 Convert enums to enum classes.
-Convert if-else to switch-case for better performance.
 Comment whole codes.
 */
