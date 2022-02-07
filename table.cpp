@@ -63,7 +63,7 @@ void Table::computeRank(const int idx)
 {
     int suits[4] = {};
     int nums[15] = {};
-    bool deck[4][15] = {};
+    int deck[4][15] = {};
     for (int i = 0; i < 2; i++)
     {
         suits[players[idx].starting[i].first]++;

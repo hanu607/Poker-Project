@@ -21,25 +21,7 @@ std::array<int, 6> isStraight(int nums[15])
     }
     return ret;
 };
-std::array<int, 6> isStraightFlush(bool deck[4][15], const int &s)
-{
-    std::array<int, 6> ret{};
-
-    int head = A, tail = A;
-    while (tail > 0)
-    {
-        if (!deck[s][tail--])
-            head = tail;
-        if (head - tail == 5)
-        {
-            ret[0] = STRAIGHTFLUSH;
-            ret[1] = head;
-            break;
-        }
-    }
-    return ret;
-};
-std::array<int, 6> isFlush(bool deck[4][15], int suits[4])
+std::array<int, 6> isFlush(int deck[4][15], int suits[4])
 {
     std::array<int, 6> ret{};
     for (int s = SPADE; s <= DIAMOND; s++)
@@ -56,9 +38,10 @@ std::array<int, 6> isFlush(bool deck[4][15], int suits[4])
                 break;
         }
 
-        if (const auto &tmp = isStraightFlush(deck, s); tmp.front())
+        if (const auto &tmp = isStraight(deck[s]); tmp.front())
         {
             ret = tmp;
+            ret[0] = STRAIGHTFLUSH;
             break;
         }
     }
