@@ -1,4 +1,11 @@
-.vscode/
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
 
 # Prerequisites
 *.d
@@ -32,3 +39,5 @@
 *.exe
 *.out
 *.app
+
+.vscode
